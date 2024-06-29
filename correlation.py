@@ -49,12 +49,26 @@ def fetch_data():
             cursor.close()  # カーソルを閉じる
             connection.close()  # 接続を閉じる
 
+# 外れ値を削除する関数
+def remove_outliers(df, column):
+    Q1 = df[column].quantile(0.25)
+    Q3 = df[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    return df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+
+
 # データを取得
 df = fetch_data()
 
 if df is not None:
     # DataFrameの内容を表示
     st.write(df)
+
+    # 外れ値を削除
+    df = remove_outliers(df, 'textLength')
+    df = remove_outliers(df, 'averageSessionDurationAverage')
 
     # textLengthとaverageSessionDurationAverageを散布図で可視化
     fig, ax = plt.subplots(figsize=(10, 6))
