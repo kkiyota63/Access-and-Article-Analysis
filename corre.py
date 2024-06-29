@@ -2,12 +2,8 @@ import mysql.connector  # MySQLデータベースに接続するためのモジ�
 from mysql.connector import Error  # MySQLエラーを処理するためのモジュール
 import pandas as pd  # データをDataFrameで処理するためのモジュール
 import matplotlib.pyplot as plt  # データの可視化のためのモジュール
-import streamlit as st  # Streamlitをインポート
 
 from config import DB_CONFIG  # 別ファイルのデータベース設定をインポート
-
-# Streamlitアプリのタイトル
-st.title('Correlation between Text Length and Average Session Duration')
 
 # データベースからデータを取得する関数
 def fetch_data():
@@ -40,7 +36,7 @@ def fetch_data():
 
     # データベース操作中に発生するエラーを処理
     except Error as e:
-        st.error(f"Error: {e}")
+        print(f"Error: {e}")
         return None
     
     # 操作が完了した後にデータベース接続を閉じることを保証
@@ -63,11 +59,16 @@ df = fetch_data()
 
 if df is not None:
     # DataFrameの内容を表示
-    st.write(df)
+    print("Original DataFrame:")
+    print(df)
 
     # 外れ値を削除
     df = remove_outliers(df, 'textLength')
     df = remove_outliers(df, 'averageSessionDurationAverage')
+
+    # 外れ値削除後のDataFrameを表示
+    print("DataFrame after removing outliers:")
+    print(df)
 
     # textLengthとaverageSessionDurationAverageを散布図で可視化
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -77,9 +78,10 @@ if df is not None:
     ax.set_title('Correlation between Text Length and Average Session Duration')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    st.pyplot(fig)
+    plt.savefig('scatter_plot.png')  # 画像ファイルとして保存
+    print("Scatter plot saved as scatter_plot.png")
 
     # 相関係数を計算して表示
     correlation = df[['textLength', 'averageSessionDurationAverage']].corr()
-    st.write("Correlation Matrix:")
-    st.write(correlation)
+    print("Correlation Matrix:")
+    print(correlation[])
