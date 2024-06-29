@@ -8,7 +8,7 @@ def fetch_data():
     try:
         # MySQLデータベースに接続
         connection = mysql.connector.connect(**DB_CONFIG)
-        
+
         if connection.is_connected():
             cursor = connection.cursor(dictionary=True)
             query = """
