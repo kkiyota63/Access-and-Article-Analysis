@@ -1,0 +1,47 @@
+LOAD DATA LOCAL INFILE '/home/kkiyota/data/AnalyticsData - 2024-05-29.csv'
+INTO TABLE analytics_data
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(date, unifiedScreenClass, screenPageViews, activeUsers, screenPageViewsPerUser, sessions, engagedSessions, sessionsPerUser, averageSessionDuration, screenPageViewsPerSession, bounceRate);
+
+
+LOAD DATA LOCAL INFILE '/home/kkiyota/Download/posts_rows.csv'
+INTO TABLE posts
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(id, date, title, text, writer, designer, categorie, tags, url);
+
+
+
+
+よく使うクエリ
+
+日にちを指定して、pv数の多いものをとってくる。
+SELECT unifiedScreenClass, 
+       SUM(screenPageViews) AS totalPageView
+FROM analytics_data
+WHERE date BETWEEN '2024-06-23' AND '2024-06-25'
+GROUP BY unifiedScreenClass
+HAVING totalPageView > 50;
+
+日にちを指定して、pv数の多いものをとってくる。かつ、テキストデータがあるものをひっぱってくる。
+SELECT ad.unifiedScreenClass, 
+       SUM(ad.screenPageViews) AS totalPageViews,
+       p.title,
+       p.text,
+       p.date,
+       p.writer,
+       p.designer,
+       p.categorie,
+       p.tags,
+       p.url
+FROM analytics_data ad
+JOIN posts p ON ad.unifiedScreenClass LIKE CONCAT('%', p.title, '%')
+WHERE ad.date BETWEEN '2024-06-23' AND '2024-06-25'
+GROUP BY ad.unifiedScreenClass, p.title, p.text, p.date, p.writer, p.designer, p.categorie, p.tags, p.url
+HAVING SUM(ad.screenPageViews) > 50;
+
+
+
