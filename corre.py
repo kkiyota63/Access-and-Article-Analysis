@@ -10,7 +10,7 @@ query = """
     AVG(ad.averageSessionDuration)
     FROM analytics_data ad
     JOIN posts p ON ad.unifiedScreenClass LIKE CONCAT('%', p.title, '%')
-    WHERE ad.date BETWEEN '2024-05-29' AND '2024-06-28'
+    WHERE ad.date BETWEEN '2024-01-01' AND '2024-05-31'
     GROUP BY ad.unifiedScreenClass, p.text;
 """
 
